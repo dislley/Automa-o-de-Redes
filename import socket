@@ -1,0 +1,24 @@
+import socket
+
+# Criar um socket TCP
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# Conectar o socket ao host e porta desejados
+sock.connect(("www.example.com", 80))
+
+# Enviar uma solicitação HTTP
+sock.send(b"GET / HTTP/1.0\r\n\r\n")
+
+# Receber a resposta
+response = b""
+while True:
+    data = sock.recv(1024)
+    if not data:
+        break
+    response += data
+
+# Exibir a resposta
+print(response.decode())
+
+# Fechar o socket
+sock.close()
