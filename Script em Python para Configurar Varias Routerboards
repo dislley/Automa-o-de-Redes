@@ -1,0 +1,52 @@
+#Para criar um script em Python que configure várias routerboards dentro de um bloco de IPs, você pode usar a biblioteca de gerenciamento de dispositivos de rede netmiko e uma função para gerar os endereços IPs das routerboards.
+
+#Aqui está um exemplo de como você pode fazer isso:
+
+# Import the necessary libraries
+from netmiko import ConnectHandler
+
+# Define the base IP address and the number of routerboards
+base_ip = "192.168.1."
+num_routerboards = 3
+
+# Generate the list of IP addresses for the routerboards
+ip_list = [base_ip + str(i) for i in range(1, num_routerboards + 1)]
+
+# Define the configuration commands
+config_commands = [
+    "ip address add address=192.168.2.1/24 interface=ether1",
+    "ip route add dst-address=0.0.0.0/0 gateway=192.168.2.2",
+    "ip firewall nat add chain=srcnat action=masquerade out-interface=ether1"
+]
+
+# Iterate over each IP address and configure the routerboard
+for ip in ip_list:
+    # Define the device details
+    device = {
+        "device_type": "mikrotik_routeros",
+        "ip": ip,
+        "username": "admin",
+        "password": "password"
+    }
+
+    # Connect to the device
+    net_connect = ConnectHandler(**device)
+
+    # Send the configuration commands to the device
+    output = net_connect.send_config_set(config_commands)
+
+    # Disconnect from the device
+    net_connect.disconnect()
+
+    # Print the output
+    print(output)
+    
+    
+    #Para executar o script, você pode usar o seguinte comando:
+    
+    #python script.py
+    
+    #Isso irá executar o script e enviar os comandos de configuração para cada routerboard no bloco de IPs. Você pode ver a saída do script para cada dispositivo na tela, incluindo qualquer mensagem de erro ou de sucesso.
+
+    #Como mencionado anteriormente, é importante ter o Python instalado em sua máquina e instalar a biblioteca netmiko antes de poder usá-la em seu script. Você pode instalar a biblioteca usando o seguinte comando:
+    #pip install netmiko
